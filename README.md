@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Devlynxio – Modern Animated Landing Page
 
-## Getting Started
+A high-performance, visually immersive landing page built using **Next.js**, **Tailwind CSS**, **GSAP**, **Framer Motion**, and **Three.js**, designed to deliver cinematic interactions, smooth scrolling, and a premium user experience.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Project Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Devlynxio showcases a modern landing page that combines **AI-assisted UI generation** with **custom-crafted interactive components**.  
+The layout features dynamic animations, 3D visuals, responsive design, and seamless performance optimizations inspired by the provided Figma design.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Tech Stack
 
-## Learn More
+- **Next.js 14 (App Router)**
+- **React 18**
+- **Tailwind CSS**
+- **GSAP + ScrollTrigger + ScrollToPlugin**
+- **Framer Motion**
+- **Three.js + @react-three/fiber**
+- **Lenis Smooth Scroll**
+- **Vercel v0 (AI Component Generator)**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🔥 Cinematic Hero Section
+- 3D particle field using Three.js  
+- Text animation with GSAP + Framer Motion  
+- Parallax & pointer-based motion  
 
-## Deploy on Vercel
+### 🌐 Industries We Serve (Horizontal Scroll)
+- GSAP-powered horizontal scroll on desktop  
+- Native manual scroll on mobile  
+- Lazy-loaded responsive images  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🛠️ Services Module
+- Auto-sliding service cards  
+- Smooth fading/scale transitions  
+- Fully responsive grid  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 👥 Testimonials Section *(Vercel v0 generated + refined)*
+- Stacked GSAP card animation  
+- Clean responsive UI  
+- Performance-optimized visuals  
+
+### 📊 Impact Section *(Vercel v0 generated + refined)*
+- Number counter animations  
+- Professional grid layout  
+- Lazy loading for images  
+
+### 📌 Responsive Navbar
+- Smooth section navigation  
+- Lenis + GSAP scroll engine  
+- Mobile-friendly menu  
+
+---
+
+## 🧠 Role of Vercel v0
+
+To accelerate UI creation, **Vercel v0** was used to generate:
+
+- **Impact Section**
+- **Testimonials Section**
+- **Footer**
+
+These components were then refined and optimized for:
+
+- Branding consistency  
+- Responsiveness  
+- Accessibility  
+- Animation smoothness  
+- Performance  
+
+All other components — including the Hero, Navbar, Services, Horizonal Scroll, and Particle Animations — were **custom-built** using React, GSAP, Framer Motion, and Three.js.
+
+---
+
+## ⚙️ Performance Optimizations
+
+- Lazy-loaded non-critical images  
+- Reduced particle counts on mobile  
+- Preloaded key hero assets  
+- Removed layout shifts (CLS = 0)  
+- Optimized GSAP timelines  
+- Better scroll performance with Lenis  
+- Conditional animation logic (desktop vs mobile)  
+
+---
+
+## live Link
+
+https://devlynxio.vercel.app/
+
