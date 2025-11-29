@@ -18,6 +18,28 @@
   --color-text: var(--color-text);
 }
 
+/* 🔥 TOTAL NO SIDE SCROLL FIX */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+/* optional but nice */
+* {
+  box-sizing: border-box;
+}
+
+
+/* Hide scrollbar everywhere */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE */
+  scrollbar-width: none;      /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;              /* Chrome */
+}
+
 
 @keyframes slide {
   0% {

@@ -80,7 +80,7 @@ export default function IndustriesWeServe() {
     <section 
       id="horizontal-scroll-section"
       ref={containerRef}
-      className="min-h-screen flex flex-nowrap items-center space-x-40 px-20"
+      className="min-h-screen flex flex-nowrap items-center space-x-20 px-20"
       style={{ width: `calc(150vw * ${slideContent.length})` }}
     >
       {slideContent.map((item, i) => (

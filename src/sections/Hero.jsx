@@ -178,7 +178,7 @@ export default function HeroCinematic( { freeze}) {
 
 
 
-  <div className="relative z-20 w-full h-full flex flex-col items-center text-center px-4 sm:px-6 justify-center lg:justify-start pt-40">
+  <div className="relative z-20 w-full h-full flex flex-col items-center text-center px-4 sm:px-6 justify-center lg:justify-start pt-60 md:pt-36">
 
     <p
       id="hero-label"
