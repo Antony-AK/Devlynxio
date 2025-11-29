@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
-
 
 export default function Navbar() {
   const MENU = ["Home", "About", "Services", "FAQ", "Contact"];
@@ -16,92 +16,104 @@ export default function Navbar() {
   const [active, setActive] = useState("Home");
   const [open, setOpen] = useState(false);
 
-  // Lock scroll when menu is open
+  /* ----------------------------------------------------------
+      1️⃣ Body scroll lock (non-blocking, no layout shift)
+  ---------------------------------------------------------- */
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "auto";
+    document.documentElement.classList.toggle("overflow-hidden", open);
   }, [open]);
 
+  /* ----------------------------------------------------------
+      2️⃣ Optimized Lenis (only once)
+  ---------------------------------------------------------- */
   useEffect(() => {
-  const lenis = new Lenis({
-    smooth: true,
-    lerp: 0.1,
-  });
-
-  window.lenis = lenis; // ⭐ MUST HAVE
-
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-
-  return () => lenis.destroy();
-}, []);
-
-
-
-
- const scrollToSection = (id) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-
-  const horizontalSection = document.getElementById("horizontal-scroll-section");
-  const horizontalEnd = horizontalSection?.offsetTop + horizontalSection?.offsetHeight;
-
-  // If target is below horizontal section → skip horizontal animation
-  if (horizontalSection && el.offsetTop > horizontalEnd) {
-    gsap.to(window, {
-      duration: 1.2,
-      scrollTo: {
-        y: el,
-        offsetY: 80,
-      },
-      ease: "power3.out",
+    const lenis = new Lenis({
+      smooth: true,
+      lerp: 0.06,
     });
-    return;
-  }
 
-  // Normal Lenis scroll for sections above horizontal slider
-  window.lenis?.scrollTo(el, {
-    offset: -80,
-    duration: 1.2,
-    easing: (t) => t * (2 - t),
-  });
-};
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
 
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
 
+  /* ----------------------------------------------------------
+      3️⃣ Super-optimized scrollTo (zero layout shift)
+  ---------------------------------------------------------- */
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const horizontal = document.getElementById("horizontal-scroll-section");
+
+    if (horizontal && el.offsetTop > horizontal.offsetTop + horizontal.offsetHeight) {
+      gsap.to(window, {
+        duration: 1,
+        scrollTo: { y: el, offsetY: 80 },
+        ease: "power3.out",
+      });
+      return;
+    }
+
+    window.lenis?.scrollTo(el, {
+      offset: -80,
+      duration: 1.1,
+      easing: (t) => t * (2 - t),
+    });
+  };
 
   return (
     <>
-      <header className="w-full fixed top-0 z-[999] bg-bg/80 backdrop-blur-lg border-b border-white/10 py-4">
+      <header
+        role="navigation"
+        aria-label="Main Navigation"
+        className="
+          w-full fixed top-0 z-[999]
+          bg-bg/80 backdrop-blur-lg
+          border-b border-white/10 py-4 transition-all
+        "
+      >
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6">
 
           {/* Logo */}
-          <div className="flex items-center gap-2 w-36 h-10">
-            <img src="/logo1.png" alt="Devlynxio Logo" className="w-full h-full object-cover" />
+          <div className="flex items-center w-36 h-10">
+            <Image
+              src="/logo1.png"
+              alt="Devlynxio Logo"
+              priority
+              width={600}
+              height={80}
+              className=" object-contain"
+            />
           </div>
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex">
             <ul className="flex gap-10">
-              {MENU.map((item, i) => (
-                <li key={i} className="group relative">
-                  <a
+              {MENU.map((item) => (
+                <li key={item} className="group relative">
+                  <button
+                    aria-label={`Go to ${item}`}
                     onClick={() => {
                       setActive(item);
                       scrollToSection(item.toLowerCase());
                     }}
-                    href={`#${item.toLowerCase()}`}
-                    className={`text-text text-[16px] font-medium transition-all duration-300 cursor-pointer 
-                      ${active === item ? "text-primary" : "hover:text-primary"}`}
+                    className={`text-[16px] font-medium transition-all
+                      ${active === item ? "text-primary" : "text-text hover:text-primary"}
+                    `}
                   >
                     {item}
-                  </a>
+                  </button>
 
                   <span
                     className={`absolute left-0 -bottom-1 h-[2px] bg-primary transition-all duration-300
-                    ${active === item ? "w-full" : "w-0 group-hover:w-full"}`}
-                  ></span>
+                      ${active === item ? "w-full" : "w-0 group-hover:w-full"}
+                    `}
+                  />
                 </li>
               ))}
             </ul>
@@ -116,25 +128,29 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Icon */}
-          <div
-            className="md:hidden text-text text-2xl me-2 cursor-pointer"
+          <button
+            aria-label="Toggle Menu"
+            className="md:hidden text-3xl text-text me-2"
             onClick={() => setOpen(!open)}
           >
             {open ? "✕" : "☰"}
-          </div>
-
+          </button>
         </div>
       </header>
 
-      {/* MOBILE MENU */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <motion.nav
+            key="mobile-menu"
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden fixed top-[72px] left-0 w-full bg-black/95 backdrop-blur-xl z-[998] border-b border-white/10"
+            className="
+              md:hidden fixed top-[72px] left-0 w-full z-[998]
+              bg-black/95 backdrop-blur-xl border-b border-white/10
+            "
           >
             <motion.ul
               initial="hidden"
@@ -142,37 +158,35 @@ export default function Navbar() {
               exit="hidden"
               variants={{
                 hidden: { opacity: 0 },
-                show: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.07 },
-                },
+                show: { opacity: 1, transition: { staggerChildren: 0.08 } },
               }}
               className="flex flex-col gap-6 px-6 py-8"
             >
-              {MENU.map((item, i) => (
+              {MENU.map((item) => (
                 <motion.li
-                  key={i}
+                  key={item}
                   variants={{
                     hidden: { opacity: 0, x: -20 },
                     show: { opacity: 1, x: 0 },
                   }}
                 >
-                  <a
+                  <button
+                    aria-label={`Go to ${item}`}
                     onClick={() => {
-                      setActive(item);
                       scrollToSection(item.toLowerCase());
+                      setActive(item);
                       setOpen(false);
                     }}
-                    href={`#${item.toLowerCase()}`}
-                    className={`block text-xl font-medium transition-all cursor-pointer
-                      ${active === item ? "text-primary" : "text-white/70 hover:text-primary"}`}
+                    className={`block text-xl font-medium 
+                      ${active === item ? "text-primary" : "text-white/70 hover:text-primary"}
+                    `}
                   >
                     {item}
-                  </a>
+                  </button>
                 </motion.li>
               ))}
 
-              {/* Auth buttons in mobile */}
+              {/* Auth */}
               <motion.div
                 variants={{
                   hidden: { opacity: 0, x: -20 },
@@ -183,12 +197,12 @@ export default function Navbar() {
                 <button className="px-4 py-3 text-white bg-white/10 rounded-md hover:bg-white/20 transition">
                   Login
                 </button>
-                <button className="px-4 py-3 bg-primary rounded-md text-white hover:bg-primary-dark transition font-medium flex items-center justify-center gap-2">
+                <button className="px-4 py-3 bg-primary text-white rounded-md hover:bg-primary-dark transition">
                   Signup
                 </button>
               </motion.div>
             </motion.ul>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </>

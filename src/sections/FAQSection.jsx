@@ -41,7 +41,7 @@ export default function FAQSection() {
 
   return (
     <section id="faq"
- className="w-full bg-black text-white py-20 px-5 sm:px-8 md:px-14 flex justify-center md:mt-10">
+ className="w-full bg-black text-white py-10 px-5 sm:px-8 md:px-14 flex justify-center md:mt-10">
       <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-20">
 
         {/* LEFT TEXT SIDE */}

@@ -15,7 +15,7 @@ export default function Footer() {
 
   
   return (
-    <footer id="contact" className="bg-black text-white w-full pt-20 pb-10 mt-32 border-t border-red-600/20">
+    <footer id="contact" className="bg-black text-white w-full pt-20 pb-10 mt-22 border-t border-red-600/20">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}

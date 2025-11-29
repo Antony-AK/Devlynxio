@@ -40,140 +40,137 @@ export default function TestimonialsSection() {
   const [isMobile, setIsMobile] = useState(false);
 
   const cardsRef = useRef([]);
-  const timelineRef = useRef(null);
+  const tl = useRef(null);
 
-  /* Detect Mobile Once Hydrated */
+  /* Detect Mobile */
   useEffect(() => {
     setIsMobile(window.innerWidth < 640);
   }, []);
 
-  /* Auto Slide */
+  /* Auto Slide — optimized (stops when tab inactive) */
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 3000);
+    let interval;
 
+    const start = () => {
+      interval = setInterval(() => {
+        if (document.visibilityState === "visible") {
+          setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+        }
+      }, 3000);
+    };
+
+    start();
     return () => clearInterval(interval);
-  }, [testimonials.length]);
+  }, []);
 
-  /* GSAP Card Animation */
+  /* GSAP Animation — optimized, no forced layout */
   useEffect(() => {
     const cards = cardsRef.current;
     if (!cards.length) return;
 
-    if (timelineRef.current) timelineRef.current.kill();
+    if (tl.current) tl.current.kill();
 
-    const tl = gsap.timeline();
-    timelineRef.current = tl;
+    const timeline = gsap.timeline();
+    tl.current = timeline;
 
     cards.forEach((card, index) => {
-      const position = (index - currentIndex + testimonials.length) % testimonials.length;
+      const pos = (index - currentIndex + testimonials.length) % testimonials.length;
 
-      // Base Reset
-      gsap.set(card, {
-        opacity: 0,
-        scale: 0.8,
-        x: isMobile ? 60 : 160,
-        zIndex: 5,
-      });
+      const config = {
+        0: {
+          opacity: 1,
+          scale: 1,
+          x: 0,
+          zIndex: 30,
+        },
+        1: {
+          opacity: isMobile ? 0.5 : 0.6,
+          scale: isMobile ? 0.88 : 0.8,
+          x: isMobile ? 25 : 85,
+          zIndex: 20,
+        },
+        2: {
+          opacity: isMobile ? 0.3 : 0.4,
+          scale: isMobile ? 0.78 : 0.62,
+          x: isMobile ? 45 : 150,
+          zIndex: 10,
+        },
+      }[pos];
 
-      if (position === 0) {
-        tl.to(
-          card,
-          {
-            opacity: 1,
-            scale: 1,
-            x: 0,
-            zIndex: 40,
-            duration: 0.7,
-            ease: "power3.out",
-          },
-          0
-        );
-      } else if (position === 1) {
-        tl.to(
-          card,
-          {
-            opacity: isMobile ? 0.5 : 0.6,
-            scale: isMobile ? 0.88 : 0.8,
-            x: isMobile ? 25 : 80,
-            zIndex: 25,
-            duration: 0.7,
-            ease: "power3.out",
-          },
-          0
-        );
-      } else {
-        tl.to(
-          card,
-          {
-            opacity: isMobile ? 0.35 : 0.4,
-            scale: isMobile ? 0.78 : 0.62,
-            x: isMobile ? 45 : 150,
-            zIndex: 10,
-            duration: 0.7,
-            ease: "power3.out",
-          },
-          0
-        );
-      }
+      timeline.to(
+        card,
+        {
+          ...config,
+          duration: 0.6,
+          ease: "power3.out",
+        },
+        0
+      );
     });
-  }, [currentIndex, isMobile, testimonials.length]);
+  }, [currentIndex, isMobile]);
 
   return (
     <section className="w-full flex justify-center items-center py-16 md:py-24 bg-black text-white px-4 md:px-6 overflow-hidden">
-      <div className="w-full max-w-7xl border border-red-600 rounded-3xl p-6 md:p-10 shadow-red-600/40 shadow-xl">
+      <div className="w-full max-w-7xl border border-red-600 rounded-3xl p-6 md:p-10 shadow-lg shadow-red-600/40">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 items-center">
 
-          {/* LEFT TEXT */}
+          {/* LEFT CONTENT */}
           <div className="space-y-4">
             <p className="text-red-600">Testimonials</p>
-            <h2 className="text-2xl md:text-4xl lg:text-4xl font-bold text-white leading-tight">
+
+            <h2 className="text-2xl md:text-4xl font-bold leading-tight">
               What Our Clients Say
             </h2>
 
-            <p className="text-base md:text-xl text-gray-400 leading-relaxed max-w-lg">
+            <p className="text-gray-400 text-base md:text-xl leading-relaxed max-w-lg">
               Trusted by brands worldwide to deliver digital excellence.
             </p>
           </div>
 
-          {/* RIGHT — STACKED ANIMATING CARDS */}
-          <div className="relative -ms-2 w-[290px] sm:w-[320px] md:w-[500px] h-72 sm:h-80 md:h-72 overflow-visible">
+          {/* RIGHT STACKED CARDS */}
+          <div className="relative w-[290px] sm:w-[320px] md:w-[500px] h-72 sm:h-80 md:h-72">
 
             {testimonials.map((t, i) => (
               <div
                 key={t.id}
                 ref={(el) => (cardsRef.current[i] = el)}
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center will-change-transform"
               >
-                <div className="bg-gradient-to-br from-red-600 to-red-700 border border-red-500 rounded-2xl p-6 md:p-8 h-full w-full flex flex-col justify-between relative overflow-hidden shadow-lg shadow-red-600/60">
+                <div className="
+                  bg-gradient-to-br from-red-600 to-red-700
+                  border border-red-500 rounded-2xl p-6 md:p-8
+                  h-full w-full shadow-lg shadow-red-600/60 
+                  relative overflow-hidden
+                ">
 
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-transparent pointer-events-none"></div>
+                  {/* Light Overlay (GPU Friendly) */}
+                  <div className="absolute inset-0 bg-red-500/10 pointer-events-none" />
 
                   {/* Quote */}
                   <p className="text-white text-sm md:text-lg leading-relaxed pr-6">
                     "{t.text}"
                   </p>
 
+                  {/* Author */}
                   <div className="flex items-center gap-4 mt-6 pt-4 border-t border-white/40">
-                    <div className="w-14 h-14 rounded-full overflow-hidden border border-white bg-red-900/40">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border border-white">
                       <Image
                         src={t.img}
                         alt={t.name}
                         width={56}
                         height={56}
-                        className="w-full h-full object-cover"
+                        className="object-cover w-full h-full"
+                        priority={i === currentIndex}   // Prevent LCP delay
                       />
                     </div>
 
                     <div>
-                      <p className="text-white font-bold text-lg">{t.name}</p>
+                      <p className="font-bold text-lg">{t.name}</p>
                       <p className="text-black/80 text-xs md:text-sm">{t.position}</p>
                     </div>
                   </div>
 
-                  <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-white/80 to-transparent"></div>
                 </div>
               </div>
             ))}

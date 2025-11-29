@@ -62,7 +62,6 @@ const SERVICES = [
   },
 ];
 
-
 export default function OurServices() {
   const [active, setActive] = useState(0);
   const [isFading, setIsFading] = useState(false);
@@ -70,7 +69,9 @@ export default function OurServices() {
   const indicatorRef = useRef(null);
   const buttonsRef = useRef([]);
 
-  // Moving blob animation
+  /* ------------------------------------
+      Moving indicator animation
+  -------------------------------------- */
   useEffect(() => {
     const btn = buttonsRef.current[active];
     if (!btn) return;
@@ -85,7 +86,9 @@ export default function OurServices() {
     });
   }, [active]);
 
-  // Auto slide
+  /* ------------------------------------
+      Auto Slide
+  -------------------------------------- */
   useEffect(() => {
     const slider = setInterval(() => {
       setIsFading(true);
@@ -99,13 +102,15 @@ export default function OurServices() {
   }, []);
 
   return (
-    <section id="services"
- className="w-full bg-black py-14 px-4 md:px-6 flex justify-center">
-      <div className="w-full  max-w-7xl ">
+    <section
+      id="services"
+      className="w-full bg-black py-14 px-4 md:px-6 flex justify-center"
+    >
+      <div className="w-full max-w-7xl">
 
         {/* TOP CARD */}
         <div
-          className="text-white px-6 md:px-10 py-14 rounded-[40px] relative "
+          className="text-white px-6 md:px-10 py-14 rounded-[40px] relative"
           style={{
             background: `
               radial-gradient(#c81818 0.10px, transparent 0.8px) 0 0 / 9px 9px,
@@ -122,7 +127,7 @@ export default function OurServices() {
             OUR SERVICES
           </p>
 
-          <h2 className="text-center text-2xl md:text-4xl font-semibold mt-4">
+          <h2 className="text-center text-2xl md:text-3xl font-semibold mt-4">
             Providing a Full Range of Services
           </h2>
 
@@ -132,7 +137,7 @@ export default function OurServices() {
             {/* LEFT TEXT */}
             <div
               className={`max-w-lg transition-all duration-500 text-center md:text-left
-              ${isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"}`}
+                ${isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"}`}
             >
               <h3 className="text-5xl text-red-600 font-extrabold">
                 {SERVICES[active].title}
@@ -151,15 +156,19 @@ export default function OurServices() {
               </button>
             </div>
 
-            {/* RIGHT IMAGE */}
+            {/* RIGHT IMAGE - OPTIMIZED */}
             <div
               className={`w-full md:w-[35%] transition-all duration-500
-              ${isFading ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
+                ${isFading ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
             >
-              <div className="w-full h-56 md:h-72  rounded-2xl flex justify-end items-end p-4 ">
+              <div className="w-full h-56 md:h-72 rounded-2xl flex justify-end items-end p-4">
                 <Image
                   src={SERVICES[active].img}
-                  alt="service"
+                  alt={SERVICES[active].heading}
+                  loading="lazy"
+                  placeholder="blur"
+                  width={500}
+                  height={400}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -169,7 +178,7 @@ export default function OurServices() {
         </div>
 
         {/* NAVIGATION BUTTONS */}
-        <div className="relative bg-black mt-8  pb-4 flex justify-center">
+        <div className="relative bg-black mt-8 pb-4 flex justify-center">
 
           {/* MOVING BLOB */}
           <div
@@ -181,7 +190,6 @@ export default function OurServices() {
               pointerEvents: "none",
               overflow: "hidden",
               borderRadius: "40px",
-              
             }}
           >
             <svg
@@ -189,37 +197,33 @@ export default function OurServices() {
               height="100%"
               viewBox="0 0 260 180"
               preserveAspectRatio="none"
-
             >
               <path
                 d="
-      M20 0
-      L240 0
-      L240 120
-      Q240 180 130 180
-      Q20 180 20 120
-      Z
-    "
+                M20 0
+                L240 0
+                L240 120
+                Q240 180 130 180
+                Q20 180 20 120
+                Z
+              "
                 fill="rgba(0,0,0,0.85)"
               />
 
-              {/* SIDE + BOTTOM STROKE ONLY */}
               <path
                 d="
-      M240 0 
-      L240 120
-      Q240 180 130 180
-      Q20 180 20 120
-      L20 0
-    "
+                M240 0 
+                L240 120
+                Q240 180 130 180
+                Q20 180 20 120
+                L20 0
+              "
                 stroke="rgba(219,0,7,0.7)"
                 strokeWidth="3"
                 fill="none"
               />
             </svg>
-
           </div>
-
 
           {/* BUTTONS */}
           <div className="flex flex-wrap md:flex-nowrap justify-center gap-6 md:gap-24 z-10 px-4">
@@ -236,9 +240,8 @@ export default function OurServices() {
                 }}
                 className={`text-sm md:text-sm font-semibold md:max-w-28 md:text-center transition cursor-pointer
                   ${active === index
-                    ? "text-primary border-b md:border-none pt-2 scale-110 font-bold "
-                    : "text-white/70 hover:text-white "
-                  }`}
+                    ? "text-primary border-b md:border-none pt-2 scale-110 font-bold"
+                    : "text-white/70 hover:text-white"}`}
               >
                 {s.tag}
               </button>
