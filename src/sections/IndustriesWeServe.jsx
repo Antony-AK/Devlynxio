@@ -38,6 +38,15 @@ const slideContent = [
 export default function IndustriesWeServe() {
   const slidesRef = useRef([]);
   const containerRef = useRef(null);
+  const [slideWidth, setSlideWidth] = React.useState(350);
+
+useEffect(() => {
+  if (slidesRef.current[0]) {
+    const realWidth = slidesRef.current[0].offsetWidth;
+    setSlideWidth(realWidth + 20); // 20px = gap/margin between slides
+  }
+}, []);
+
 
   // Smooth scrolling (Lenis)
   useEffect(() => {
@@ -56,53 +65,71 @@ export default function IndustriesWeServe() {
   }, []);
 
   // Horizontal scroll animation
-  useEffect(() => {
-    if (!containerRef.current) return;
+ // Horizontal scroll animation
+useEffect(() => {
+  if (!containerRef.current) return;
 
-    const slides = slidesRef.current;
+  // Disable GSAP horizontal scroll for mobile
+  if (window.innerWidth < 768) return;
 
-    gsap.to(slides, {
-      xPercent: -100 * (slides.length - 1),
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        scrub: 1,
-        pin: true,
-        end: "+=" + containerRef.current.offsetWidth,
-        snap: 1 / (slides.length - 1),
-      },
-    });
+  const slides = slidesRef.current;
 
-    return () => ScrollTrigger.getAll().forEach((st) => st.kill());
-  }, []);
+  gsap.to(slides, {
+    xPercent: -100 * (slides.length - 1),
+    ease: "none",
+    scrollTrigger: {
+      trigger: containerRef.current,
+      scrub: 1,
+      pin: true,
+      end: "+=" + containerRef.current.offsetWidth,
+      snap: 1 / (slides.length - 1),
+    },
+  });
+
+  return () => ScrollTrigger.getAll().forEach((st) => st.kill());
+}, []);
+
+const totalWidth = typeof window !== "undefined"
+  ? window.innerWidth < 768
+    ? `${slideWidth * slideContent.length}px`
+  : `calc(150vw * ${slideContent.length})`
+  : "100%";
+
 
   return (
-    <section 
-      id="horizontal-scroll-section"
-      ref={containerRef}
-      className="min-h-screen flex flex-nowrap items-center space-x-20 px-20"
-      style={{ width: `calc(150vw * ${slideContent.length})` }}
-    >
+   <section 
+  id="horizontal-scroll-section"
+  ref={containerRef}
+  className="
+    md:min-h-screen
+    flex flex-nowrap items-center 
+    md:space-x-20 md:px-20
+    overflow-x-scroll scrollbar-hide md:overflow-x-hidden   /* 🔥 mobile scroll */
+    snap-x snap-mandatory md:snap-none       /* 🔥 smooth swipe scroll */
+  "
+  // style={{ width: totalWidth }}
+>
+
       {slideContent.map((item, i) => (
         <div
           key={i}
           ref={(el) => (slidesRef.current[i] = el)}
-          className="w-[850px] h-[350px] shrink-0 flex gap-14 justify-center items-center bg-transparent overflow-hidden rounded-xl p-5"
+          className="w-[350px] md:w-[850px] h-[500px] md:h-[350px] shrink-0 flex bg-transparent flex-col md:flex-row md:gap-14 justify-center items-center  overflow-hidden rounded-xl p-5"
         >
           {/* TEXT */}
           <div className="mb-6">
-            <h2 className="text-4xl font-bold text-red-600">{item.title}</h2>
-            <p className="text-gray-300 mt-3 max-w-lg">{item.text}</p>
+            <h2 className="text-xl md:text-4xl text-center md:text-left font-bold text-red-600">{item.title}</h2>
+            <p className="text-gray-300 mt-3 text-center md:text-left text-sm md:text-base max-w-lg">{item.text}</p>
           </div>
 
           {/* IMAGE */}
-          <div className="w-[70%] h-full">
+          <div className="md:w-[70%] h-full">
             <Image
               src={`/img${i + 1}.jpg`}
               width={800}
               height={600}
               alt={item.title}
-              className="w-full h-full object-cover rounded-xl shadow-[0_0_25px_5px_rgba(255,0,0,0.6)] transition-all duration-300"
+              className="md:w-full md:h-full w-[300px] h-[200px] object-cover rounded-xl shadow-[0_0_25px_5px_rgba(255,0,0,0.6)] transition-all duration-300"
             />
           </div>
         </div>

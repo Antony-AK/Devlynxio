@@ -105,7 +105,7 @@ export default function OurServices() {
 
         {/* TOP CARD */}
         <div
-          className="text-white px-6 md:px-10 py-8 rounded-[40px] relative "
+          className="text-white px-6 md:px-10 py-14 rounded-[40px] relative "
           style={{
             background: `
               radial-gradient(#c81818 0.10px, transparent 0.8px) 0 0 / 9px 9px,

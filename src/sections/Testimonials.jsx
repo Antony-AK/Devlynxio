@@ -139,7 +139,7 @@ export default function TestimonialsSection() {
           </div>
 
           {/* RIGHT — STACKED ANIMATING CARDS */}
-          <div className="relative -ms-2 w-[260px] sm:w-[320px] md:w-[500px] h-72 sm:h-80 md:h-72 overflow-visible">
+          <div className="relative -ms-2 w-[290px] sm:w-[320px] md:w-[500px] h-72 sm:h-80 md:h-72 overflow-visible">
 
             {testimonials.map((t, i) => (
               <div
