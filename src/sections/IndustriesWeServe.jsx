@@ -109,12 +109,11 @@ const totalWidth = typeof window !== "undefined"
   "
   // style={{ width: totalWidth }}
 >
-
       {slideContent.map((item, i) => (
         <div
           key={i}
           ref={(el) => (slidesRef.current[i] = el)}
-          className="w-[350px] md:w-[850px] h-[500px] md:h-[350px] shrink-0 flex bg-transparent flex-col md:flex-row md:gap-14 justify-center items-center  overflow-hidden rounded-xl p-5"
+          className="w-[370px] md:w-[850px] h-[500px] md:h-[350px] shrink-0 flex bg-transparent flex-col md:flex-row md:gap-14 justify-center items-center  overflow-hidden rounded-xl p-5"
         >
           {/* TEXT */}
           <div className="mb-6">

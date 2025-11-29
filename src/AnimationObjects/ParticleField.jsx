@@ -7,41 +7,44 @@ import gsap from "gsap";
 
 const COLORS = ["#ff1d1d", "#008f4f", "#0a3aff"];
 
-// Mobile optimized cube size
+// Slightly reduce cube size on mobile, but still visible
 const CUBE_SIZE =
-  typeof window !== "undefined" && window.innerWidth < 768 ? 0.015 : 0.02;
+  typeof window !== "undefined" && window.innerWidth < 768 ? 0.018 : 0.02;
 
 function PixelCubeParticles({ trigger, pulse }) {
-  // Reduce particle count ONLY on mobile
-  const COUNT =
-    typeof window !== "undefined" && window.innerWidth < 768 ? 700 : 1800;
+  const isMobile =
+    typeof window !== "undefined" && window.innerWidth < 768;
+
+  // 🔥 Increase from 700 → 1000 (still super safe)
+  const COUNT = isMobile ? 1000 : 1800;
 
   const mesh = useRef();
   const mouse = useRef({ x: 0, y: 0 });
 
-  // Generate random positions once
+  // Smaller particle spread on mobile (WAY more visible)
   const positions = useMemo(() => {
     const arr = new Float32Array(COUNT * 3);
+
     for (let i = 0; i < COUNT; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 22;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 22;
+      arr[i * 3] = (Math.random() - 0.5) * (isMobile ? 12 : 22); // shrink X range
+      arr[i * 3 + 1] = (Math.random() - 0.5) * (isMobile ? 8 : 14); // shrink Y range
+      arr[i * 3 + 2] = (Math.random() - 0.5) * (isMobile ? 10 : 22); // shrink Z range
     }
+
     return arr;
   }, []);
 
-  // Material
   const material = useMemo(() => {
     return new THREE.MeshStandardMaterial({
       color: new THREE.Color(COLORS[0]),
       emissive: new THREE.Color(COLORS[0]),
-      emissiveIntensity: 1.3,
+      emissiveIntensity: 1.2,
       roughness: 0.35,
       metalness: 0.25,
     });
   }, []);
 
-  // Set instanced mesh matrices
+  // Place cubes in scene
   useEffect(() => {
     if (!mesh.current) return;
 
@@ -57,11 +60,11 @@ function PixelCubeParticles({ trigger, pulse }) {
     }
 
     mesh.current.instanceMatrix.needsUpdate = true;
-  }, [positions, COUNT]);
+  }, [positions]);
 
-  // Mouse movement — DISABLED ON MOBILE
+  // Mouse movement (desktop only)
   useEffect(() => {
-    if (window.innerWidth < 768) return; // skip mobile
+    if (isMobile) return;
 
     const fn = (e) => {
       mouse.current.x = (e.clientX / window.innerWidth - 0.5) * 0.4;
@@ -72,10 +75,11 @@ function PixelCubeParticles({ trigger, pulse }) {
     return () => window.removeEventListener("mousemove", fn);
   }, []);
 
-  // Color change animation
+  // Color change
   useEffect(() => {
     const target = new THREE.Color(COLORS[trigger]);
     gsap.to(material.color, { ...target, duration: 1 });
+
     gsap.to(material.emissive, {
       r: target.r * 0.8,
       g: target.g * 0.8,
@@ -84,34 +88,36 @@ function PixelCubeParticles({ trigger, pulse }) {
     });
   }, [trigger]);
 
-  // Pulse scale animation
+  // Pulse scaling
   useEffect(() => {
     if (!mesh.current) return;
 
     gsap.to(mesh.current.scale, {
-      x: 1.35,
-      y: 1.35,
-      z: 1.35,
-      duration: 0.5,
+      x: 1.25,
+      y: 1.25,
+      z: 1.25,
+      duration: 0.4,
       ease: "power2.out",
       onComplete: () =>
         gsap.to(mesh.current.scale, {
           x: 1,
           y: 1,
           z: 1,
-          duration: 0.35,
+          duration: 0.3,
         }),
     });
   }, [pulse]);
 
-  // Rotation — lighter on mobile
+  // Rotation — reduced for mobile
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    const isMobile = window.innerWidth < 768;
 
     if (mesh.current) {
-      mesh.current.rotation.y = t * (isMobile ? 0.03 : 0.06) + mouse.current.x * 0.4;
-      mesh.current.rotation.x = t * (isMobile ? 0.02 : 0.04) + mouse.current.y * 0.4;
+      mesh.current.rotation.y =
+        t * (isMobile ? 0.02 : 0.06) + mouse.current.x * (isMobile ? 0 : 0.3);
+
+      mesh.current.rotation.x =
+        t * (isMobile ? 0.015 : 0.04) + mouse.current.y * (isMobile ? 0 : 0.3);
     }
   });
 
@@ -123,16 +129,18 @@ function PixelCubeParticles({ trigger, pulse }) {
 }
 
 export default function ParticleField({ trigger, pulse }) {
+  const isMobile =
+    typeof window !== "undefined" && window.innerWidth < 768;
+
   return (
     <div className="absolute inset-0 z-[3]">
       <Canvas
-        camera={{ position: [0, 0, 10], fov: 70 }}
+        camera={{
+          position: [0, 0, isMobile ? 8.5 : 10], // bring closer on mobile
+          fov: isMobile ? 75 : 70,
+        }}
         frameloop="always"
-        dpr={
-          typeof window !== "undefined" && window.innerWidth < 768
-            ? 0.8 // ⚡ mobile smoother
-            : 1.5 // desktop full quality
-        }
+        dpr={isMobile ? 0.9 : 1.5}
       >
         <ambientLight intensity={0.35} />
         <PixelCubeParticles trigger={trigger} pulse={pulse} />

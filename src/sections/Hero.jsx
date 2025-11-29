@@ -202,7 +202,7 @@ export default function HeroCinematic( { freeze}) {
     </p>
 
     <div id="hero-cta" className="opacity-0 mt-6 md:mt-8">
-      <button className="bg-primary hover:bg-primary-dark transition px-6 py-2 sm:px-7 sm:py-3 rounded-xl text-sm sm:text-base md:text-lg font-semibold">
+      <button onClick={()=> window.location.href="#contact"} className="bg-primary hover:bg-primary-dark transition px-6 py-2 sm:px-7 sm:py-3 rounded-xl text-sm sm:text-base md:text-lg font-semibold">
         Contact Us →
       </button>
     </div>
